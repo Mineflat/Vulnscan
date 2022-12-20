@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.2.32526.322
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AutoscanBot", "AutoscanBot\AutoscanBot.csproj", "{426F63F4-1E23-466F-8DAE-FF5797774843}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{426F63F4-1E23-466F-8DAE-FF5797774843}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{426F63F4-1E23-466F-8DAE-FF5797774843}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{426F63F4-1E23-466F-8DAE-FF5797774843}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{426F63F4-1E23-466F-8DAE-FF5797774843}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {67E72EA5-7250-4555-BB93-B1D1F79B6765}
+	EndGlobalSection
+EndGlobal
