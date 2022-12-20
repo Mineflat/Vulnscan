@@ -14,19 +14,23 @@
                 Console.WriteLine(Properties.Resources.BadUsageMessage.Replace("\\n", Environment.NewLine));
                 return false;
             }
-            if (!Storage.TrySet_ConfigurationPath(args[0]))
+            if (!Configuration.TryRead(args[0]))
             {
-                Console.WriteLine($"File '{args[0]}' doesn't exist. Create and fill it before starting");
+                Console.WriteLine($"File '{args[0]}' doesn't exist or invalid. Create and fill it with required variables before starting\n" +
+                    $"Config must contain this:\n{Properties.Resources.RequiredVariables}");
                 return false;
             }
             return true;
         }
-
+        private static void PreconfigureTerminal()
+        {
+            Console.Title = "Vulnscan";
+            Console.Clear();
+        }
         static void Main(string[] args)
         {
             if (!CheckArgs(args)) return;
-            Console.Title = "Vulnscan";
-            Console.Clear();
+            PreconfigureTerminal();
             // start point //
         }
     }

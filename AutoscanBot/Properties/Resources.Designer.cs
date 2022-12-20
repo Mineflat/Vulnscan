@@ -68,5 +68,14 @@ namespace AutoscanBot.Properties {
                 return ResourceManager.GetString("BadUsageMessage", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на WORKING_DIRECTORY.
+        /// </summary>
+        public static string RequiredVariables {
+            get {
+                return ResourceManager.GetString("RequiredVariables", resourceCulture);
+            }
+        }
     }
 }

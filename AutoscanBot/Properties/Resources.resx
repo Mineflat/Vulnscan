@@ -119,6 +119,10 @@
   </resheader>
   <data name="BadUsageMessage" xml:space="preserve">
     <value>Bad usage! To start system use:\nvulnscan &lt;CONFIG PATH&gt;</value>
-    <comment>Shows normal usage</comment>
+    <comment>Determines normal usage</comment>
+  </data>
+  <data name="RequiredVariables" xml:space="preserve">
+    <value>WORKING_DIRECTORY</value>
+    <comment>Determines required variables list</comment>
   </data>
 </root>
