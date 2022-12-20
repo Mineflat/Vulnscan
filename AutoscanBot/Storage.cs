@@ -28,6 +28,7 @@ namespace AutoscanBot
             }
             return false;
         }
+
         /// <summary>
         /// Устанавливает токен Телеграмм-бота из входящей строки
         /// </summary>

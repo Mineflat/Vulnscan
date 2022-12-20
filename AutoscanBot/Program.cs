@@ -27,8 +27,7 @@
             if (!CheckArgs(args)) return;
             Console.Title = "Vulnscan";
             Console.Clear();
-
-
+            // start point //
         }
     }
 }
