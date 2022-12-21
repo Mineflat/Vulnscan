@@ -10,5 +10,11 @@ namespace AutoscanBot
     {
         public string? Name;
         public string? Content;
+
+        public ConfigurationItem(string? name, string? content)
+        {
+            Name = name;
+            Content = content;
+        }
     }
 }

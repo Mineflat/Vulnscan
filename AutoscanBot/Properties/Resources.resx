@@ -118,7 +118,7 @@
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
   <data name="BadUsageMessage" xml:space="preserve">
-    <value>Bad usage! To start system use:\nvulnscan &lt;CONFIG PATH&gt;</value>
+    <value>Bad usage! To start system use: ./vulnscan &lt;CONFIG PATH&gt;</value>
     <comment>Determines normal usage</comment>
   </data>
   <data name="RequiredVariables" xml:space="preserve">

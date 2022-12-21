@@ -61,7 +61,7 @@ namespace AutoscanBot.Properties {
         }
         
         /// <summary>
-        ///   Ищет локализованную строку, похожую на Bad usage! To start system use:\nvulnscan &lt;CONFIG PATH&gt;.
+        ///   Ищет локализованную строку, похожую на Bad usage! To start system use: ./vulnscan &lt;CONFIG PATH&gt;.
         /// </summary>
         public static string BadUsageMessage {
             get {
