@@ -14,23 +14,19 @@
                 Logger.Log(Logger.LogLevel.CRITICAL, Properties.Resources.BadUsageMessage);
                 return false;
             }
-            if (Configuration.TryRead(args[0]) != null)
+            Configuration.Preset = Configuration.TryRead(args[0]);
+            if (Configuration.Preset == null)
             {
                 Logger.Log(Logger.LogLevel.CRITICAL, $"File '{args[0]}' doesn't exist or invalid. Create and fill it with required variables before starting\n" +
                     $"Config must contain this:\n{Properties.Resources.RequiredVariables}");
                 return false;
             }
+            Logger.Log(Logger.LogLevel.SUCCESS, "Configuration saved");
             return true;
-        }
-        private static void PreconfigureTerminal()
-        {
-            Console.Title = "Vulnscan";
-            Console.Clear();
         }
         static void Main(string[] args)
         {
             if (!CheckArgs(args)) return;
-            PreconfigureTerminal();
         }
     }
 }

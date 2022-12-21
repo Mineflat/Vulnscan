@@ -2,6 +2,8 @@
 {
     internal class Configuration
     {
+
+        public static List<ConfigurationItem>? Preset = new List<ConfigurationItem>();
         /// <summary>
         /// Читает значения из конфигурационного файла
         /// </summary>
@@ -16,18 +18,24 @@
                 string[]? paramParts;
                 foreach (string pureConfigItem in pureConfig)
                 {
-                    paramParts = pureConfigItem.Split('=', StringSplitOptions.TrimEntries);
-                    // В записи a=b=c=...=X будет рассматриваться только 1 и 2 параметр (a, b)
-                    if (paramParts[0].Length > 0) // чтобы не реагировал, если попалась пустая строка
+                    if(pureConfigItem.Length > 0) // чтобы не реагировал, если попалась пустая строка
                     {
+                        paramParts = pureConfigItem.Split('=', StringSplitOptions.TrimEntries);
+                        // В записи a=b=c=...=X будет рассматриваться только первые 2 параметра, остальное будет отброшено
                         if (paramParts.Length >= 2)
                         {
+                            paramParts[1] = paramParts[1].Replace('\"', '\0').Trim();
+                            if (paramParts[1].Contains('#'))
+                            {
+                                paramParts[1] = paramParts[1].Substring(0, paramParts[1].IndexOf('#') - 1);
+                            }
                             ConfigurationItem item = new ConfigurationItem(paramParts[0], paramParts[1]);
                             configurationItems.Add(item);
                             Logger.Log(Logger.LogLevel.INFO, $"Config: \'{paramParts[0]}\' => \'{paramParts[1]}\'");
                         }
                         else
                         {
+                            if (paramParts[0].Trim()[0] == '#') continue; // пропускаем комментарии, остальное парсим по возможности
                             Logger.Log(Logger.LogLevel.ERROR, $"Config: Bad string \'{pureConfigItem}\'. Expected usage is \'PARAMETER=VALUE\'");
                         }
                     }
