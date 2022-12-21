@@ -2,24 +2,26 @@
 {
     internal class Configuration
     {
-        private static string? WorkingDirectory;
-        private static long TelegramBotToken;
         /// <summary>
         /// Проверяет и значения из конфигурационного файла
         /// </summary>
         /// <param name="path">Полный путь до файла конфигурации</param>
         /// <returns>True, если путь до файла существует и конфиг был установлен, в остальных случаях - False</returns>
-        public static bool TryRead(string? path)
+        public static List<ConfigurationItem>? TryRead(string? path)
         {
-            if (!string.IsNullOrWhiteSpace(path))
+            if (File.Exists(path))
             {
-                if (new FileInfo(path).Exists)
+                string[] pureConfig = File.ReadAllLines(path);
+                List<ConfigurationItem> configurationItems = new List<ConfigurationItem>();
+                foreach (string pureConfigItem in pureConfig)
                 {
-                    //ToDo: Сделать так чтобы эта хуйня что-то обновляла
-                    return true;
+                    ConfigurationItem item = new ConfigurationItem();
+                    item.Name = pureConfigItem;
                 }
+
+                return configurationItems;
             }
-            return false;
+            return null;
         }
     }
 }
