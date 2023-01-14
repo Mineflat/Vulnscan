@@ -18,15 +18,16 @@
             if (Configuration.Preset == null)
             {
                 Logger.Log(Logger.LogLevel.CRITICAL, $"File '{args[0]}' doesn't exist or invalid. Create and fill it with required variables before starting\n" +
-                    $"Config must contain this:\n{Properties.Resources.RequiredVariables}");
+                    $"Config missing this things:\n{Properties.Resources.RequiredVariables}");
                 return false;
             }
-            Logger.Log(Logger.LogLevel.SUCCESS, "Configuration saved");
+            Logger.Log(Logger.LogLevel.SUCCESS, "Configuration done, starting system");
             return true;
         }
         static void Main(string[] args)
         {
             if (!CheckArgs(args)) return;
+            Telegramm.Bot.Start();
         }
     }
 }

@@ -29,7 +29,7 @@
                             {
                                 paramParts[1] = paramParts[1].Substring(0, paramParts[1].IndexOf('#') - 1);
                             }
-                            ConfigurationItem item = new ConfigurationItem(paramParts[0], paramParts[1]);
+                            ConfigurationItem item = new ConfigurationItem(paramParts[0].ToLower(), paramParts[1]);
                             configurationItems.Add(item);
                             Logger.Log(Logger.LogLevel.INFO, $"Config: \'{paramParts[0]}\' => \'{paramParts[1]}\'");
                         }
