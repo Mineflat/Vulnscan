@@ -61,6 +61,15 @@ namespace AutoscanBot.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на Telegramm bot setup failed. Is the token in BOT_TOKEN correct?.
+        /// </summary>
+        public static string BadOrMissingTelegrammBotToken {
+            get {
+                return ResourceManager.GetString("BadOrMissingTelegrammBotToken", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на Bad usage! To start system use: ./vulnscan &lt;CONFIG PATH&gt;.
         /// </summary>
         public static string BadUsageMessage {

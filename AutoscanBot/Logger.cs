@@ -12,9 +12,9 @@ namespace AutoscanBot
         {
             MESSAGE, SUCCESS, INFO, ERROR, CRITICAL
         }
-        public static void Log(LogLevel level, string message)
+        public static void Log(LogLevel level, string? message)
         {
-            if (message.Length == 0) return;
+            if (message?.Length == 0) return;
             switch (level)
             {
                 case LogLevel.MESSAGE:

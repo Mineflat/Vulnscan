@@ -28,6 +28,7 @@
         {
             if (!CheckArgs(args)) return;
             Telegramm.Bot.Start();
+            Console.ReadLine();
         }
     }
 }

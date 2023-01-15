@@ -44,5 +44,10 @@
             }
             return null;
         }
+        public static string? GetItemValueByName(string configItemName)
+        {
+            if(string.IsNullOrEmpty(configItemName)) return null;
+            return Preset?.Where(i => i.Name == configItemName.ToLower()).FirstOrDefault()?.Content?.Trim('\0', ' ');
+        }
     }
 }
