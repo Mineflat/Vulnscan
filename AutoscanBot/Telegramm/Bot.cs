@@ -42,7 +42,7 @@ namespace AutoscanBot.Telegramm
                         StartReceiving();
                     });
                     UpdateThread.IsBackground = true;
-                    UpdateThread.Start(); 
+                    UpdateThread.Start();
                 }
             }
             catch
@@ -53,7 +53,7 @@ namespace AutoscanBot.Telegramm
         }
         private static async void StartReceiving()
         {
-            if(TelegrammBotClient == null)
+            if (TelegrammBotClient == null)
             {
                 Logger.Log(Logger.LogLevel.ERROR, Properties.Resources.BadOrMissingTelegrammBotToken);
             }
@@ -62,7 +62,6 @@ namespace AutoscanBot.Telegramm
                 var updates = TelegrammBotClient.GetUpdates();
                 while (true)
                 {
-                    //updates.Last
                     if (updates.Any())
                     {
                         foreach (var update in updates)
@@ -71,18 +70,21 @@ namespace AutoscanBot.Telegramm
                             if (update.Message != null)
                             {
                                 long chatId = update.Message.Chat.Id; // Target chat Id
-                                if(update.Type == UpdateType.Message && update.Message?.Text?.Length > 0)
+                                if (update.Type == UpdateType.Message && update.Message?.Text?.Length > 0)
                                 {
                                     Logger.Log(Logger.LogLevel.INFO, $"{update.Message?.Contact?.FirstName} {update.Message?.Contact?.LastName} ({update.Message?.Contact?.UserId}): ");
                                     Logger.Log(Logger.LogLevel.MESSAGE, update.Message?.Text);
                                 }
                                 else
                                 {
-                                    Logger.Log(Logger.LogLevel.INFO, $"{update.Message?.Contact?.FirstName} {update.Message?.Contact?.LastName} ({update.Message?.Contact?.UserId}):\n" +
-                                        $"\tReceived {update.Type}");
+                                    Logger.Log(Logger.LogLevel.INFO,
+                                        $"{update.Message?.Contact?.FirstName} {update.Message?.Contact?.LastName} ({update.Message?.Contact?.UserId}): Received {update.Type}");
                                 }
-
-                                await TelegrammBotClient.SendMessageAsync(chatId, "OK"); // Send a message
+                                string? replyMessage = ProcessMeggase(update.Message?.Text);
+                                if (replyMessage != null)
+                                {
+                                    await TelegrammBotClient.SendMessageAsync(chatId, replyMessage); // Send a message
+                                }
                             }
                         }
                         var offset = updates.Last().UpdateId + 1;
@@ -96,10 +98,19 @@ namespace AutoscanBot.Telegramm
                 }
             }
         }
-        private static string? ProcessMeggase(string message)
+        private static string? ProcessMeggase(string? message)
         {
-            return null; // Сюда бы рандомных ответов добавить... 
+            message = message?.Trim(); // если в message лежит null, то ошибки не должно произойти из-за `?`
+            string reply = string.Empty;
+            switch (message)
+            {
+                default:
+                    reply = "I don't understand you"; // Сюда бы рандомных ответов добавить... 
+                    break;
+            }
+            return reply;
         }
+
         private static void SetIgnoreExceptions(string? token)
         {
             if (string.IsNullOrWhiteSpace(token)) return;
