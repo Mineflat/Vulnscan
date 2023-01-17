@@ -1,9 +1,9 @@
 ﻿/*
     Плохое решение, не делайте так
  */
-using System.Linq;
 using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
+using Telegram.BotAPI.AvailableMethods.FormattingOptions;
 using Telegram.BotAPI.GettingUpdates;
 
 namespace AutoscanBot.Telegramm
@@ -11,6 +11,7 @@ namespace AutoscanBot.Telegramm
     internal class Bot
     {
         private static BotClient? TelegrammBotClient;
+        private static readonly Random getrandom = new Random(); // Это нужно для стабильного рандома. Пока что это скорее костыль
         public static void Start()
         {
             if (Setup(Configuration.GetItemValueByName("bot_token")))
@@ -45,8 +46,9 @@ namespace AutoscanBot.Telegramm
                     UpdateThread.Start();
                 }
             }
-            catch
+            catch (Exception BotLaunchException)
             {
+                Logger.Log(Logger.LogLevel.ERROR, BotLaunchException.Message);
                 return false;
             }
             return true;
@@ -72,18 +74,25 @@ namespace AutoscanBot.Telegramm
                                 long chatId = update.Message.Chat.Id; // Target chat Id
                                 if (update.Type == UpdateType.Message && update.Message?.Text?.Length > 0)
                                 {
-                                    Logger.Log(Logger.LogLevel.INFO, $"{update.Message?.Contact?.FirstName} {update.Message?.Contact?.LastName} ({update.Message?.Contact?.UserId}): ");
+                                    Logger.Log(Logger.LogLevel.INFO, 
+                                        $"{update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}): ");
                                     Logger.Log(Logger.LogLevel.MESSAGE, update.Message?.Text);
                                 }
                                 else
                                 {
                                     Logger.Log(Logger.LogLevel.INFO,
-                                        $"{update.Message?.Contact?.FirstName} {update.Message?.Contact?.LastName} ({update.Message?.Contact?.UserId}): Received {update.Type}");
+                                        $"{update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}): Received message of type `{update.Type}`");
                                 }
+                                // ToDo: Сделать для каждой командый свой тип ParseMode.
+                                /*
+                                 * 1. Возвращаем CommandReply
+                                 * 2. Берем оттуда поле ParseMode
+                                 * 3. Вставляем поле в соответствующее место
+                                 */
                                 string? replyMessage = ProcessMessage(update.Message?.Text);
                                 if (replyMessage != null)
                                 {
-                                    await TelegrammBotClient.SendMessageAsync(chatId, replyMessage); // Send a message
+                                    await TelegrammBotClient.SendMessageAsync(chatId, replyMessage, parseMode: ParseMode.MarkdownV2 ); // вот сюда вставляем ParseMode
                                 }
                             }
                         }
@@ -100,15 +109,27 @@ namespace AutoscanBot.Telegramm
         }
         private static string? ProcessMessage(string? message)
         {
-            message = message?.Trim(); // если в message лежит null, то ошибки не должно произойти из-за `?`
-            string reply = string.Empty;
-            switch (message)
+            message = message?.Trim()?.ToLower();
+
+            foreach (Command command in Command.AvailibleCommands)
             {
-                default:
-                    reply = "I don't understand you"; // Сюда бы рандомных ответов добавить... 
-                    break;
+                if(command.InvokeName.ToLower() == message)
+                {
+                    if(command.LinkedTo != null)
+                    {
+                        CommandExecutionResult result = command.LinkedTo.Invoke();
+                        if(result != null && result.Success) 
+                        {
+                            return result.Message;
+                        }
+                    }
+                    else
+                    {
+                        return "Эта команда, конечно, существует, но мой создатель пока ее не реализовал. Пните этого человека чтобы получить больше информаци";
+                    }
+                }
             }
-            return reply;
+            return GetRandomConfuseReply();
         }
         private static void CreateBotInstance(string? token)
         {
@@ -126,6 +147,13 @@ namespace AutoscanBot.Telegramm
                     TelegrammBotClient = new BotClient(token, false);
                     Logger.Log(Logger.LogLevel.INFO, $"Telegramm bot ignore exceptions set to FALSE");
                 }
+            }
+        }
+        private static string GetRandomConfuseReply()
+        {
+            lock (getrandom) // Это финт ушами для синхронизации. Не обращайте внимания...
+            {
+               return Configuration.ConfuseReplyPresets[getrandom.Next(0, Configuration.ConfuseReplyPresets.Count - 1)];
             }
         }
     }

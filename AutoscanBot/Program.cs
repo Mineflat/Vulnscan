@@ -24,9 +24,19 @@
             Logger.Log(Logger.LogLevel.SUCCESS, "Configuration done, starting system");
             return true;
         }
+        private static bool InstallWorkingDirectory()
+        {
+            string? path = Configuration.GetItemValueByName("WORKING_DIRECTORY");
+            if (path == null) return false;
+            if (Directory.Exists(path)) Directory.CreateDirectory(path);
+            
+            
+            return true;
+        }
         static void Main(string[] args)
         {
             if (!CheckArgs(args)) return;
+
             Telegramm.Bot.Start();
             Console.ReadLine();
         }
