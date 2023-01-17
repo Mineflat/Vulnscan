@@ -23,11 +23,11 @@ namespace AutoscanBot.Telegramm
             if (token != null || token?.Length >= 0)
             {
                 Logger.Log(Logger.LogLevel.INFO, "BOT_TOKEN detected, trying to start it");
-                if (TryLaunch(token).Result) return true;
+                if (TryLaunch(token)) return true;
             }
             return false;
         }
-        private static async Task<bool> TryLaunch(string? token)
+        private static bool TryLaunch(string? token)
         {
             if (token == null || token?.Length == 0) return false;
             SetIgnoreExceptions(token);
