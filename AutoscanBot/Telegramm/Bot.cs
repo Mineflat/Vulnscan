@@ -30,7 +30,7 @@ namespace AutoscanBot.Telegramm
         private static bool TryLaunch(string? token)
         {
             if (token == null || token?.Length == 0) return false;
-            SetIgnoreExceptions(token);
+            CreateBotInstance(token);
             try
             {
                 if (TelegrammBotClient != null)
@@ -80,7 +80,7 @@ namespace AutoscanBot.Telegramm
                                     Logger.Log(Logger.LogLevel.INFO,
                                         $"{update.Message?.Contact?.FirstName} {update.Message?.Contact?.LastName} ({update.Message?.Contact?.UserId}): Received {update.Type}");
                                 }
-                                string? replyMessage = ProcessMeggase(update.Message?.Text);
+                                string? replyMessage = ProcessMessage(update.Message?.Text);
                                 if (replyMessage != null)
                                 {
                                     await TelegrammBotClient.SendMessageAsync(chatId, replyMessage); // Send a message
@@ -98,7 +98,7 @@ namespace AutoscanBot.Telegramm
                 }
             }
         }
-        private static string? ProcessMeggase(string? message)
+        private static string? ProcessMessage(string? message)
         {
             message = message?.Trim(); // если в message лежит null, то ошибки не должно произойти из-за `?`
             string reply = string.Empty;
@@ -110,8 +110,7 @@ namespace AutoscanBot.Telegramm
             }
             return reply;
         }
-
-        private static void SetIgnoreExceptions(string? token)
+        private static void CreateBotInstance(string? token)
         {
             if (string.IsNullOrWhiteSpace(token)) return;
             string? ignoreBotExceptions = Configuration.GetItemValueByName("BOT_IGNORE_EXCEPTIONS")?.ToLower();
