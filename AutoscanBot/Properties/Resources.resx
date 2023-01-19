@@ -129,4 +129,8 @@
     <value>WORKING_DIRECTORY</value>
     <comment>Determines required variables list</comment>
   </data>
+  <data name="UncorrectBotName" xml:space="preserve">
+    <value>Variable 'BOT_INIT_NAME' isn't set. Telegramm connection closed</value>
+    <comment>Containg error message if variable BOT_INIT_NAME isn't set</comment>
+  </data>
 </root>

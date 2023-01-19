@@ -52,10 +52,12 @@
             }
             return null;
         }
-        public static string? GetItemValueByName(string configItemName)
+        public static string GetItemValueByName(string configItemName)
         {
-            if(string.IsNullOrEmpty(configItemName)) return null;
-            return Preset?.Where(i => i.Name == configItemName.ToLower()).FirstOrDefault()?.Content?.Trim('\0', ' ');
+            if(string.IsNullOrEmpty(configItemName)) return string.Empty;
+            string? result = Preset?.Where(i => i.Name?.ToLower() == configItemName.ToLower()).FirstOrDefault()?.Content?.Trim('\0', ' ');
+            if(result == null) return string.Empty;
+            return result;
         }
     }
 }

@@ -12,6 +12,7 @@ namespace AutoscanBot.Telegramm
     {
         private static BotClient? TelegrammBotClient;
         private static readonly Random getrandom = new Random(); // Это нужно для стабильного рандома. Пока что это скорее костыль
+        private static string BotName { get; set; } = string.Empty;
         public static void Start()
         {
             if (Setup(Configuration.GetItemValueByName("bot_token")))
@@ -61,6 +62,13 @@ namespace AutoscanBot.Telegramm
             }
             else
             {
+                // Если имя из конфига не читается, то коннект для бота закроется
+                if (!TryInitBotname())
+                {
+                    Logger.Log(Logger.LogLevel.ERROR, Properties.Resources.UncorrectBotName);
+                    return;
+                }
+                
                 var updates = TelegrammBotClient.GetUpdates();
                 while (true)
                 {
@@ -69,9 +77,15 @@ namespace AutoscanBot.Telegramm
                         foreach (var update in updates)
                         {
                             // Process update
-                            if (update.Message != null)
+                            if (update.Message?.Text != null)
                             {
-                                long chatId = update.Message.Chat.Id; // Target chat Id
+                                string messageText = update.Message.Text.ToLower();
+                                if (!messageText.Contains(Configuration.GetItemValueByName(BotName).ToLower())) continue;
+
+                                messageText = messageText.Replace($"{BotName},", string.Empty); // Да, запятая обазятельна. Можно было бы добавить еще 1 Replace, но нахуй надо
+                                messageText = messageText.Trim();
+
+                                long chatId = update.Message.Chat.Id; 
                                 if (update.Type == UpdateType.Message && update.Message?.Text?.Length > 0)
                                 {
                                     Logger.Log(Logger.LogLevel.INFO, 
@@ -89,10 +103,11 @@ namespace AutoscanBot.Telegramm
                                  * 2. Берем оттуда поле ParseMode
                                  * 3. Вставляем поле в соответствующее место
                                  */
-                                string? replyMessage = ProcessMessage(update.Message?.Text);
+                                string? replyMessage = ProcessMessage(messageText);
                                 if (replyMessage != null)
                                 {
-                                    await TelegrammBotClient.SendMessageAsync(chatId, replyMessage, parseMode: ParseMode.MarkdownV2 ); // вот сюда вставляем ParseMode
+                                    // await TelegrammBotClient.SendMessageAsync(chatId, replyMessage, parseMode: ParseMode.MarkdownV2); // вот сюда вставляем ParseMode
+                                    await TelegrammBotClient.SendMessageAsync(chatId, replyMessage); // вот сюда вставляем ParseMode
                                 }
                             }
                         }
@@ -106,6 +121,16 @@ namespace AutoscanBot.Telegramm
                     Thread.Sleep(10);
                 }
             }
+        }
+        public static bool TryInitBotname()
+        {
+            string? name = Configuration.GetItemValueByName("BOT_INIT_NAME").ToLower();
+            if (name != null && name.Length > 0)
+            {
+                BotName = name;
+                return true;
+            }
+            return false;
         }
         private static string? ProcessMessage(string? message)
         {

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using Telegram.BotAPI.AvailableMethods.FormattingOptions;
 
 namespace AutoscanBot.Telegramm
 {
@@ -10,6 +11,11 @@ namespace AutoscanBot.Telegramm
     {
         public string InvokeName { get; set; } = string.Empty;
         public string Description { get; set; } = string.Empty;
+
+        public bool EnableTerminalUsing = false;
+        public bool EnableBotUsing = false;
+        public dynamic TelegrammParseMode = ParseMode.MarkdownV2; // Это плохой код, не надо так делать. Я же - скоро исправлю
+        public byte Type { get; set; } = 0; // ⚙=0 🤖=1 ⚙🤖=2 
         public short Class { get; set; } = 0; // TERMINAL = 0, BOT = 1, COMMON = 2
 
         public delegate CommandExecutionResult LinkedMethod();
@@ -22,7 +28,8 @@ namespace AutoscanBot.Telegramm
                 InvokeName="Help",
                 Description = "Покажет сообщение со всеми доступными командами",
                 LinkedTo = Invoke_Help,
-                Class = 2
+                EnableTerminalUsing=true,
+                EnableBotUsing=true
             }
         };
 
@@ -30,38 +37,21 @@ namespace AutoscanBot.Telegramm
         #region Реализация команд
         private static CommandExecutionResult Invoke_Help()
         {
-            string returnMessage = string.Empty;
-            // Дальше пойдет код, за которой мне стыдно, но это лишь временный костыль, ведь уже почти час ночи...
-            // Да, это дубляж кода :/
-            List<Command> bot = AvailibleCommands.FindAll(x => x.Class == 1);
-            if (bot.Count > 0)
-            {
-                returnMessage += "Команды, доступные боту:\n";
-                for (int i = 0; i < bot.Count; i++)
-                {
-                    returnMessage += $"{DigitToSmile(i + 1)} {bot[i].InvokeName}:\n`{bot[i].Description}`\n";
-                }
-            }
+            string returnMessage = "Вот доступные команды (⚙ - доступно боту, 🤖 - доступно администратору).\n";
 
-            List<Command> common = AvailibleCommands.FindAll(x => x.Class == 2);
-            if (common.Count > 0)
+            for (int i = 0; i < AvailibleCommands.Count; i++)
             {
-                returnMessage += "Команды, доступные везде:\n";
-                for (int i = 0; i < common.Count; i++)
-                {
-                    returnMessage += $"{DigitToSmile(i + 1)} {common[i].InvokeName}:\n`{common[i].Description}`\n";
-                }
-            }
+                returnMessage += $"{DigitToSmile(i + 1)} ";
 
-            List<Command> terminal = AvailibleCommands.FindAll(x => x.Class == 0);
-            if (terminal.Count > 0)
-            {
-                returnMessage += "Команды, доступные в терминале:\n";
-                for (int i = 0; i < terminal.Count; i++)
-                {
-                    returnMessage += $"{DigitToSmile(i + 1)} {terminal[i].InvokeName}:\n`{terminal[i].Description}`\n";
-                }
+                if (AvailibleCommands[i].EnableTerminalUsing)
+                    returnMessage += "⚙";
+                if (AvailibleCommands[i].EnableBotUsing)
+                    returnMessage += "🤖";
+
+                returnMessage += $" `{AvailibleCommands[i].InvokeName}`:\n{AvailibleCommands[i].Description}\n";
             }
+            returnMessage += $"\nНапомню, формат команды следующий:\n`{Configuration.GetItemValueByName("BOT_INIT_NAME")}, <команда>`";
+
             return new CommandExecutionResult(true, returnMessage);
         }
 

@@ -86,5 +86,14 @@ namespace AutoscanBot.Properties {
                 return ResourceManager.GetString("RequiredVariables", resourceCulture);
             }
         }
+        
+        /// <summary>
+        ///   Ищет локализованную строку, похожую на Variable &apos;BOT_INIT_NAME&apos; isn&apos;t set. Telegramm connection closed.
+        /// </summary>
+        public static string UncorrectBotName {
+            get {
+                return ResourceManager.GetString("UncorrectBotName", resourceCulture);
+            }
+        }
     }
 }
