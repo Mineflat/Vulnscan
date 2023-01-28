@@ -12,7 +12,7 @@ namespace AutoscanBot.Telegramm
     {
         private static BotClient? TelegrammBotClient;
         private static readonly Random getrandom = new Random(); // Это нужно для стабильного рандома. Пока что это скорее костыль
-        private static string BotName { get; set; } = Configuration.GetItemValueByName("BOT_INVOKE_NAME");
+        private static string BotName { get; set; } = Configuration.GetItemValueByName("BOT_INVOKE_NAME") ?? string.Empty;
         public static void Start()
         {
             if (Setup(Configuration.GetItemValueByName("bot_token")))
@@ -77,7 +77,7 @@ namespace AutoscanBot.Telegramm
 
                             long chatId = update.Message.Chat.Id;
 
-                            Configuration.Log.Invoke(Logger.LogLevel.MESSAGE,
+                            Configuration.Log.Invoke(Logger.LogLevel.COMMAND,
                                 $"[{update.Type}] {update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}): {update.Message?.Text}");
 
                             // ToDo: Сделать для каждой командый свой тип ParseMode.
@@ -107,11 +107,15 @@ namespace AutoscanBot.Telegramm
         private static string? GetCleanCommand(string message)
         {
             if (message.Length == 0) return null;
-            return message.Replace(Configuration.GetItemValueByName("BOT_INVOKE_NAME"), "").Trim();
+            string? invokeName = Configuration.GetItemValueByName("BOT_INVOKE_NAME");
+            if(invokeName == null) return null;
+            else
+            return message.Replace(invokeName, "").Trim();
         }
         private static bool VerifiBorAppearal(string message)
         {
-            string botInvokeName = Configuration.GetItemValueByName("BOT_INVOKE_NAME");
+            string? botInvokeName = Configuration.GetItemValueByName("BOT_INVOKE_NAME");
+            if(botInvokeName == null) return false;
             message = message.Trim();
             string[] buffer = message.Split(' ');
             if (buffer.Length >= 0)

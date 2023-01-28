@@ -24,21 +24,21 @@
             Configuration.Log.Invoke(Logger.LogLevel.SUCCESS, "Configuration done, starting system");
             return true;
         }
-        private static bool InstallWorkingDirectory()
-        {
-            string? path = Configuration.GetItemValueByName("WORKING_DIRECTORY");
-            if (path == null) return false;
-            if (Directory.Exists(path)) Directory.CreateDirectory(path);
-            return true;
-        }
-
+        //private static bool InstallWorkingDirectory()
+        //{
+        //    string? path = Configuration.GetItemValueByName("WORKING_DIRECTORY");
+        //    if (path == null) return false;
+        //    if (Directory.Exists(path)) Directory.CreateDirectory(path);
+        //    return true;
+        //}
         static void Main(string[] args)
         {
             if (!CheckArgs(args)) return;
             if (!Storage.SetLogPath()) return;
             Configuration.ConfigureLog();
-            Configuration.Log(Logger.LogLevel.INFO, $"{new string('=', 10)} SYSTEM STARTED AT {DateTime.UtcNow.ToUniversalTime()} {new string('=', 10)}");
+            Configuration.Log(Logger.LogLevel.INFO, $"{new string('=', 10)} SYSTEM STARTED AT {DateTime.Now} {new string('=', 10)}");
             Telegramm.Bot.Start();
+            Console.WriteLine("PRESS ANY KEY TO ");
             Console.ReadLine();
         }
     }

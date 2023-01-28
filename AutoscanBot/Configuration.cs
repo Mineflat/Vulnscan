@@ -55,8 +55,7 @@
 
                         ConfigurationItem item = new ConfigurationItem(paramParts[0].Trim(replaceChars).ToLower(), paramParts[1].Trim(replaceChars));
                         configurationItems.Add(item);
-                        Configuration.Log.Invoke(Logger.LogLevel.INFO, $"Config: \'{paramParts[0]}\' => \'{paramParts[1]}\'");
-                    }
+                        }
                     else
                     {
                         if (paramParts[0].Trim()[0] == '#') continue; // пропускаем комментарии, остальное парсим по возможности
