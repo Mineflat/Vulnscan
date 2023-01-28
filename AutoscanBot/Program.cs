@@ -37,6 +37,7 @@
             if (!CheckArgs(args)) return;
             if (!Storage.SetLogPath()) return;
             Configuration.ConfigureLog();
+            Configuration.Log(Logger.LogLevel.INFO, $"{new string('=', 10)} SYSTEM STARTED AT {DateTime.UtcNow.ToUniversalTime()} {new string('=', 10)}");
             Telegramm.Bot.Start();
             Console.ReadLine();
         }

@@ -78,7 +78,7 @@ namespace AutoscanBot.Telegramm
                             long chatId = update.Message.Chat.Id;
 
                             Configuration.Log.Invoke(Logger.LogLevel.MESSAGE,
-                                $"[{update.Type}] {update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}):\n{update.Message?.Text}");
+                                $"[{update.Type}] {update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}): {update.Message?.Text}");
 
                             // ToDo: Сделать для каждой командый свой тип ParseMode.
                             /*

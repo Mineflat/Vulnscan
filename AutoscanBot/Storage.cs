@@ -9,6 +9,12 @@ namespace AutoscanBot
         {
             string? logsPath = Configuration.GetItemValueByName("WORKING_DIRECTORY");
             if (logsPath == null) return false;
+            logsPath = logsPath.Trim();
+            if (logsPath[logsPath.Length - 1] == '/' || logsPath[logsPath.Length - 1] == '\\')
+            {
+                logsPath = logsPath.Substring(0, logsPath.Length - 1);
+            }
+
             if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
             {
                 logsPath += "\\LOGS\\";
