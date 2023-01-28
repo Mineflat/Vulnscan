@@ -4,12 +4,8 @@
     {
 
         public static List<ConfigurationItem>? Preset = new List<ConfigurationItem>();
-        /// <summary>
-        /// Читает значения из конфигурационного файла
-        /// </summary>
-        /// <param name="path">Полный путь до файла конфигурации</param>
-        /// <returns>Возвращает неструктурированный список параметров и значений из конфига. Может вернуть Null, если список пуст</returns>
-        
+        public delegate void CreateLog(Logger.LogLevel level, string? message);
+        public static CreateLog Log { get; set; } = Logger.Log;
         public static List<string> ConfuseReplyPresets = new List<string>()
         {
             "Я не совсем понял о чем ты говоришь", "Я тебя не понимаю",
@@ -18,6 +14,21 @@
             "Между человеком и ботом слишком большая разница. Используй команды если хочешь чтобы я тебя понял", "А можно командой?",
             "Формат команд мне нравится больше. Давай на \"командном\" языке", "И все же, командами мне нравится больше. Я их хотя бы понимаю..."
         };
+        public static void ConfigureLog()
+        {
+            string? LogFS_Preset = GetItemValueByName("LOGS_ENABLE_FS_WRITER");
+            if (LogFS_Preset!= null)
+            {
+                if (LogFS_Preset.ToLower().Contains("true"))
+                {
+                    Log = Logger.FSLog;
+                }
+                else
+                {
+                    Log = Logger.Log;
+                }
+            }
+        }
         public static List<ConfigurationItem>? TryRead(string? path)
         {
             if (File.Exists(path))
@@ -44,23 +55,37 @@
                         
                         ConfigurationItem item = new ConfigurationItem(paramParts[0].Trim(replaceChars).ToLower(), paramParts[1].Trim(replaceChars));
                         configurationItems.Add(item);
-                        Logger.Log(Logger.LogLevel.INFO, $"Config: \'{paramParts[0]}\' => \'{paramParts[1]}\'");
+                        Configuration.Log.Invoke(Logger.LogLevel.INFO, $"Config: \'{paramParts[0]}\' => \'{paramParts[1]}\'");
                     }
                     else
                     {
                         if (paramParts[0].Trim()[0] == '#') continue; // пропускаем комментарии, остальное парсим по возможности
-                        Logger.Log(Logger.LogLevel.ERROR, $"Config: Bad string \'{pureConfigItem}\'. Expected usage is \'PARAMETER=VALUE\'");
+                        Configuration.Log.Invoke(Logger.LogLevel.ERROR, $"Config: Bad string \'{pureConfigItem}\'. Expected usage is \'PARAMETER=VALUE\'");
                     }
                 }
                 if (configurationItems.Count > 0) return configurationItems;
             }
             return null;
         }
-        public static string GetItemValueByName(string configItemName)
+        public static void SwitchLogType(bool enableFS)
         {
-            if(string.IsNullOrEmpty(configItemName)) return string.Empty;
+            // ToDo: предусмотреть вариант с изменением конфига (внутри приложения) и проверку, существует ли файл на самом деле
+            if (enableFS)
+            {
+                Log = Logger.FSLog;
+                Logger.Log(Logger.LogLevel.SUCCESS, $"Log type set to FS logs. Path: '{Storage.LogPath}'");
+
+            }
+            else
+            {
+                Log = Logger.Log;
+                Logger.Log(Logger.LogLevel.SUCCESS, "Log type set to stdIO - terminal plain text used");
+            }
+        }
+        public static string? GetItemValueByName(string configItemName)
+        {
+            if(string.IsNullOrEmpty(configItemName)) return null;
             string? result = Preset?.Where(i => i.Name?.ToLower() == configItemName.ToLower()).FirstOrDefault()?.Content?.Trim('\0', ' ');
-            if(result == null) return string.Empty;
             return result;
         }
     }

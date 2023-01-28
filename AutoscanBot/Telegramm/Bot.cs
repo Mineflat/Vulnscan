@@ -16,15 +16,15 @@ namespace AutoscanBot.Telegramm
         public static void Start()
         {
             if (Setup(Configuration.GetItemValueByName("bot_token")))
-                Logger.Log(Logger.LogLevel.SUCCESS, "Setup is OK, bot started successfully");
+                Configuration.Log.Invoke(Logger.LogLevel.SUCCESS, "Setup is OK, bot started successfully");
             else
-                Logger.Log(Logger.LogLevel.ERROR, Properties.Resources.BadOrMissingTelegrammBotToken);
+                Configuration.Log.Invoke(Logger.LogLevel.ERROR, Properties.Resources.BadOrMissingTelegrammBotToken);
         }
         private static bool Setup(string? token)
         {
             if (token != null || token?.Length >= 0)
             {
-                Logger.Log(Logger.LogLevel.INFO, "BOT_TOKEN detected, trying to start it");
+                Configuration.Log.Invoke(Logger.LogLevel.INFO, "BOT_TOKEN detected, trying to start it");
                 if (TryLaunch(token)) return true;
             }
             return false;
@@ -38,7 +38,7 @@ namespace AutoscanBot.Telegramm
                 if (TelegrammBotClient != null)
                 {
                     string? username = TelegrammBotClient?.GetMeAsync().Result.Username; // Получаем его юзернейм
-                    Logger.Log(Logger.LogLevel.INFO, $"Started bot @{username}");
+                    Configuration.Log.Invoke(Logger.LogLevel.INFO, $"Started bot @{username}");
                     Thread UpdateThread = new Thread(() =>
                     {
                         StartReceiving();
@@ -49,7 +49,7 @@ namespace AutoscanBot.Telegramm
             }
             catch (Exception BotLaunchException)
             {
-                Logger.Log(Logger.LogLevel.ERROR, BotLaunchException.Message);
+                Configuration.Log.Invoke(Logger.LogLevel.ERROR, BotLaunchException.Message);
                 return false;
             }
             return true;
@@ -58,7 +58,7 @@ namespace AutoscanBot.Telegramm
         {
             if (TelegrammBotClient == null)
             {
-                Logger.Log(Logger.LogLevel.ERROR, Properties.Resources.BadOrMissingTelegrammBotToken);
+                Configuration.Log.Invoke(Logger.LogLevel.ERROR, Properties.Resources.BadOrMissingTelegrammBotToken);
             }
             else
             {
@@ -77,7 +77,7 @@ namespace AutoscanBot.Telegramm
 
                             long chatId = update.Message.Chat.Id;
 
-                            Logger.Log(Logger.LogLevel.MESSAGE,
+                            Configuration.Log.Invoke(Logger.LogLevel.MESSAGE,
                                 $"[{update.Type}] {update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}):\n{update.Message?.Text}");
 
                             // ToDo: Сделать для каждой командый свой тип ParseMode.
@@ -156,12 +156,12 @@ namespace AutoscanBot.Telegramm
                 if (ignoreBotExceptions == "true")
                 {
                     TelegrammBotClient = new BotClient(token, true);
-                    Logger.Log(Logger.LogLevel.INFO, $"Telegramm bot ignore exceptions set to TRUE");
+                    Configuration.Log.Invoke(Logger.LogLevel.INFO, $"Telegramm bot ignore exceptions set to TRUE");
                 }
                 else
                 {
                     TelegrammBotClient = new BotClient(token, false);
-                    Logger.Log(Logger.LogLevel.INFO, $"Telegramm bot ignore exceptions set to FALSE");
+                    Configuration.Log.Invoke(Logger.LogLevel.INFO, $"Telegramm bot ignore exceptions set to FALSE");
                 }
             }
         }

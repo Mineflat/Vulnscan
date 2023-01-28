@@ -95,6 +95,5 @@ namespace AutoscanBot.Telegramm
             return converted;
         }
         #endregion
-
     }
 }
