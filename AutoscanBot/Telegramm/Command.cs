@@ -25,6 +25,14 @@ namespace AutoscanBot.Telegramm
         {
             new Command
             {
+                InvokeName = "Show config",
+                Description = "Покажет актуальную конфигурацию",
+                LinkedTo = ShowConfig,
+                EnableTerminalUsing = true,
+                EnableBotUsing = true
+            },
+            new Command
+            {
                 InvokeName="Help",
                 Description = "Покажет сообщение со всеми доступными командами",
                 LinkedTo = Invoke_Help,
@@ -35,6 +43,21 @@ namespace AutoscanBot.Telegramm
 
 
         #region Реализация команд
+        private static CommandExecutionResult ShowConfig()
+        {
+            string returnMessage = string.Empty;
+            if(Configuration.Preset != null)
+            {
+                foreach (var item in Configuration.Preset)
+                {
+                    if (item.Name == "bot_token") continue;
+                    returnMessage += $"`{item.Name}` => `{item.Content}`\n";
+                }
+                return new CommandExecutionResult(true, returnMessage);
+            }
+            return new CommandExecutionResult(true, "Конфигурационный файл пуст");
+
+        }
         private static CommandExecutionResult Invoke_Help()
         {
             string returnMessage = "Вот доступные команды (⚙ - доступно боту, 🤖 - доступно администратору).\n";
@@ -50,7 +73,7 @@ namespace AutoscanBot.Telegramm
 
                 returnMessage += $" `{AvailibleCommands[i].InvokeName}`:\n{AvailibleCommands[i].Description}\n";
             }
-            returnMessage += $"\nНапомню, формат команды следующий:\n`{Configuration.GetItemValueByName("BOT_INIT_NAME")}, <команда>`";
+            returnMessage += $"\nНапомню, формат команды следующий:\n`{Configuration.GetItemValueByName("BOT_INVOKE_NAME")} <команда>`";
 
             return new CommandExecutionResult(true, returnMessage);
         }

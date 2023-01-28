@@ -12,7 +12,7 @@ namespace AutoscanBot.Telegramm
     {
         private static BotClient? TelegrammBotClient;
         private static readonly Random getrandom = new Random(); // Это нужно для стабильного рандома. Пока что это скорее костыль
-        private static string BotName { get; set; } = string.Empty;
+        private static string BotName { get; set; } = Configuration.GetItemValueByName("BOT_INVOKE_NAME");
         public static void Start()
         {
             if (Setup(Configuration.GetItemValueByName("bot_token")))
@@ -62,13 +62,6 @@ namespace AutoscanBot.Telegramm
             }
             else
             {
-                // Если имя из конфига не читается, то коннект для бота закроется
-                if (!TryInitBotname())
-                {
-                    Logger.Log(Logger.LogLevel.ERROR, Properties.Resources.UncorrectBotName);
-                    return;
-                }
-                
                 var updates = TelegrammBotClient.GetUpdates();
                 while (true)
                 {
@@ -77,38 +70,27 @@ namespace AutoscanBot.Telegramm
                         foreach (var update in updates)
                         {
                             // Process update
-                            if (update.Message?.Text != null)
+                            if (update.Message?.Text == null) continue;
+                            if (!VerifiBorAppearal(update.Message.Text)) continue; // проверяем, что обратились именно к боту
+                            string? messageText = GetCleanCommand(update.Message.Text);
+                            if (messageText == null) continue;
+
+                            long chatId = update.Message.Chat.Id;
+
+                            Logger.Log(Logger.LogLevel.MESSAGE,
+                                $"[{update.Type}] {update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}):\n{update.Message?.Text}");
+
+                            // ToDo: Сделать для каждой командый свой тип ParseMode.
+                            /*
+                             * 1. Возвращаем CommandReply
+                             * 2. Берем оттуда поле ParseMode
+                             * 3. Вставляем поле в соответствующее место
+                             */
+                            string? replyMessage = ProcessMessage(messageText);
+                            if (replyMessage != null)
                             {
-                                string messageText = update.Message.Text.ToLower();
-                                if (!messageText.Contains(Configuration.GetItemValueByName(BotName).ToLower())) continue;
-
-                                messageText = messageText.Replace($"{BotName},", string.Empty); // Да, запятая обазятельна. Можно было бы добавить еще 1 Replace, но нахуй надо
-                                messageText = messageText.Trim();
-
-                                long chatId = update.Message.Chat.Id; 
-                                if (update.Type == UpdateType.Message && update.Message?.Text?.Length > 0)
-                                {
-                                    Logger.Log(Logger.LogLevel.INFO, 
-                                        $"{update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}): ");
-                                    Logger.Log(Logger.LogLevel.MESSAGE, update.Message?.Text);
-                                }
-                                else
-                                {
-                                    Logger.Log(Logger.LogLevel.INFO,
-                                        $"{update.Message?.From?.FirstName} {update.Message?.From?.LastName} ({update.Message?.From?.Username}): Received message of type `{update.Type}`");
-                                }
-                                // ToDo: Сделать для каждой командый свой тип ParseMode.
-                                /*
-                                 * 1. Возвращаем CommandReply
-                                 * 2. Берем оттуда поле ParseMode
-                                 * 3. Вставляем поле в соответствующее место
-                                 */
-                                string? replyMessage = ProcessMessage(messageText);
-                                if (replyMessage != null)
-                                {
-                                    // await TelegrammBotClient.SendMessageAsync(chatId, replyMessage, parseMode: ParseMode.MarkdownV2); // вот сюда вставляем ParseMode
-                                    await TelegrammBotClient.SendMessageAsync(chatId, replyMessage); // вот сюда вставляем ParseMode
-                                }
+                                // await TelegrammBotClient.SendMessageAsync(chatId, replyMessage, parseMode: ParseMode.MarkdownV2); // вот сюда вставляем ParseMode
+                                await TelegrammBotClient.SendMessageAsync(chatId, replyMessage); // вот сюда вставляем ParseMode
                             }
                         }
                         var offset = updates.Last().UpdateId + 1;
@@ -118,17 +100,26 @@ namespace AutoscanBot.Telegramm
                     {
                         updates = TelegrammBotClient.GetUpdates();
                     }
-                    Thread.Sleep(10);
+                    Thread.Sleep(100);
                 }
             }
         }
-        public static bool TryInitBotname()
+        private static string? GetCleanCommand(string message)
         {
-            string? name = Configuration.GetItemValueByName("BOT_INIT_NAME").ToLower();
-            if (name != null && name.Length > 0)
+            if (message.Length == 0) return null;
+            return message.Replace(Configuration.GetItemValueByName("BOT_INVOKE_NAME"), "").Trim();
+        }
+        private static bool VerifiBorAppearal(string message)
+        {
+            string botInvokeName = Configuration.GetItemValueByName("BOT_INVOKE_NAME");
+            message = message.Trim();
+            string[] buffer = message.Split(' ');
+            if (buffer.Length >= 0)
             {
-                BotName = name;
-                return true;
+                if (buffer[0].ToLower().Contains(botInvokeName.ToLower()))
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -138,12 +129,12 @@ namespace AutoscanBot.Telegramm
 
             foreach (Command command in Command.AvailibleCommands)
             {
-                if(command.InvokeName.ToLower() == message)
+                if (command.InvokeName.ToLower() == message)
                 {
-                    if(command.LinkedTo != null)
+                    if (command.LinkedTo != null)
                     {
                         CommandExecutionResult result = command.LinkedTo.Invoke();
-                        if(result != null && result.Success) 
+                        if (result != null && result.Success)
                         {
                             return result.Message;
                         }
@@ -178,7 +169,7 @@ namespace AutoscanBot.Telegramm
         {
             lock (getrandom) // Это финт ушами для синхронизации. Не обращайте внимания...
             {
-               return Configuration.ConfuseReplyPresets[getrandom.Next(0, Configuration.ConfuseReplyPresets.Count - 1)];
+                return Configuration.ConfuseReplyPresets[getrandom.Next(0, Configuration.ConfuseReplyPresets.Count - 1)];
             }
         }
     }
