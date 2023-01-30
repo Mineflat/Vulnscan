@@ -79,6 +79,15 @@ namespace AutoscanBot.Properties {
         }
         
         /// <summary>
+        ///   Ищет локализованную строку, похожую на .
+        /// </summary>
+        public static string redirectLogs {
+            get {
+                return ResourceManager.GetString("redirectLogs", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Ищет локализованную строку, похожую на WORKING_DIRECTORY.
         /// </summary>
         public static string RequiredVariables {

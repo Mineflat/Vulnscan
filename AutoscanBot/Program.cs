@@ -38,7 +38,6 @@
             Configuration.ConfigureLog();
             Configuration.Log(Logger.LogLevel.INFO, $"{new string('=', 10)} SYSTEM STARTED AT {DateTime.Now} {new string('=', 10)}");
             Telegramm.Bot.Start();
-            Console.WriteLine("PRESS ANY KEY TO ");
             Console.ReadLine();
         }
     }

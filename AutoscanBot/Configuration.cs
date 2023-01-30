@@ -4,7 +4,7 @@
     {
 
         public static List<ConfigurationItem>? Preset = new List<ConfigurationItem>();
-        public delegate void CreateLog(Logger.LogLevel level, string? message);
+        public delegate void CreateLog(Logger.LogLevel level, string message);
         public static CreateLog Log { get; set; } = Logger.Log;
         public static List<string> ConfuseReplyPresets = new List<string>()
         {
