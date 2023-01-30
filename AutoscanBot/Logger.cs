@@ -41,7 +41,27 @@ namespace AutoscanBot
                         preset = $"\\e[36m[{DateTime.Now}][{level}]:\\e[0m ";
                         break;
                 }
-                Process.Start("/bin/bash", $"echo -en '\\e[1G{preset}' >> /dev/pts/{ttyNum}; echo -E '{message}' >> /dev/pts/{ttyNum}");
+                //
+                Process.Start("/bin/echo", new string[]
+                {
+                    $"-en",
+                    $"\"\\e[1G{preset}\" >> /dev/tty{ttyNum}"
+                });
+                Process.Start("/bin/echo", new string[]
+                {
+                    $"-E",
+                    $"'{message}'" +
+                    $">> /dev/tty{ttyNum}"
+                }
+                );
+                Process.Start("/bin/echo", $"-E '{message}' >> /dev/tty{ttyNum}");
+
+                //Process.Start("/bin/echo", $"-en \"\\e[1G{preset}\" >> /dev/tty{ttyNum}");
+                //Process.Start("/bin/echo", $"-E '{message}' >> /dev/tty{ttyNum}");
+
+                //string command = $"echo -en '\\\\e[1G{preset}' >> /dev/pts/{ttyNum}; echo -E '{message}' >> /dev/pts/{ttyNum}\"";
+
+                //Process.Start("/bin/bash -с", $"echo -en '\\e[1G{preset}' >> /dev/pts/{ttyNum}; echo -E '{message}' >> /dev/pts/{ttyNum}");
             }
         }
         public static void FSLog(LogLevel level, string? message)

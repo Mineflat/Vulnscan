@@ -3,7 +3,6 @@
  */
 using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
-using Telegram.BotAPI.AvailableMethods.FormattingOptions;
 using Telegram.BotAPI.GettingUpdates;
 
 namespace AutoscanBot.Telegramm
