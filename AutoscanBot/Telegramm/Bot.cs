@@ -1,7 +1,4 @@
-﻿/*
-    Плохое решение, не делайте так
- */
-using Telegram.BotAPI;
+﻿using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.GettingUpdates;
 

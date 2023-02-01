@@ -43,6 +43,7 @@ namespace AutoscanBot.Telegramm
 
 
         #region Реализация команд
+
         private static CommandExecutionResult ShowConfig()
         {
             string returnMessage = string.Empty;
@@ -77,7 +78,6 @@ namespace AutoscanBot.Telegramm
 
             return new CommandExecutionResult(true, returnMessage);
         }
-
         private static string? DigitToSmile(int digit)
         {
             if (digit < 0) return digit.ToString();
