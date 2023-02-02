@@ -46,8 +46,6 @@ namespace AutoscanBot.Telegramm
             return true;
         }
 
-
-
         #region Shebangs
         public const string bash_Shebang = "#!/bin/bash";
         #endregion

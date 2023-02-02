@@ -35,12 +35,12 @@ namespace AutoscanBot
                 string logPath = string.Empty;
                 if (OperatingSystem.IsWindows())
                 {
-                    logPath = $".\\{workdir}\\LOGS";
+                    logPath = $"{workdir}\\LOGS";
                 }
                 else
                 if (OperatingSystem.IsLinux())
                 {
-                    logPath = $"./{workdir}/LOGS";
+                    logPath = $"{workdir}/LOGS";
                     if(int.TryParse(Configuration.GetItemValueByName("LOGS_TTY_NUMBER"), out int tty))
                     {
                         Logger.ttyNum = tty;
