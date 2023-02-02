@@ -1,57 +1,66 @@
-﻿using System.Runtime.InteropServices;
+﻿using System.IO.Pipes;
+using System.Runtime.InteropServices;
 
 namespace AutoscanBot
 {
     internal class Storage
     {
         public static string? LogPath { get; set; }
-        public static bool SetLogPath()
+        public static void ConfigureLog()
         {
-            string? logsPath = Configuration.GetItemValueByName("WORKING_DIRECTORY");
-            if (logsPath == null) return false;
-            logsPath = logsPath.Trim();
-            if (logsPath[logsPath.Length - 1] == '/' || logsPath[logsPath.Length - 1] == '\\')
+            string? workdir = Configuration.GetItemValueByName("WORKING_DIRECTORY");
+            if (!Directory.Exists(workdir)) throw new Exception("Configuration error: param 'WORKING_DIRECTORY' is missing or directory missing");
+            /*
+              public static void ConfigureLog()
+        {
+            string? LogFS_Preset = GetItemValueByName("LOGS_ENABLE_FS_WRITER");
+            if (LogFS_Preset != null)
             {
-                logsPath = logsPath.Substring(0, logsPath.Length - 1);
-            }
-
-            if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
-            {
-                logsPath += "\\LOGS\\";
-            }
-            else if (RuntimeInformation.IsOSPlatform(OSPlatform.Linux))
-            {
-                logsPath += "/LOGS/";
-            }
-            else
-            {
-                Logger.Log(Logger.LogLevel.CRITICAL, "Unsupported platform detected. This app can be run only on Windows and Linux hosts");
-                return false;
-            }
-            string? logFSEnabled = Configuration.GetItemValueByName("LOGS_ENABLE_FS_WRITER");
-            if (logFSEnabled != null)
-            {
-                if (logFSEnabled.Trim().ToLower() == "true")
+                if (LogFS_Preset.ToLower().Contains("true"))
                 {
-                    if (!new DirectoryInfo(logsPath).Exists)
+                    Log = Logger.FSLog;
+                }
+            }
+            if (int.TryParse(GetItemValueByName("LOGS_ENABLE_FS_WRITER"), out int tty))
+            {
+                Logger.ttyNum = tty;
+                Log = Logger.LogTTY;
+            }
+        }
+             */
+
+            bool logFSEnabled = Configuration.GetItemValueByName("LOGS_ENABLE_FS_WRITER")?.Trim().ToLower() == "true";
+            if (logFSEnabled)
+            {
+                string logPath = string.Empty;
+                if (OperatingSystem.IsWindows())
+                {
+                    logPath = $".\\{workdir}\\LOGS";
+                }
+                else
+                if (OperatingSystem.IsLinux())
+                {
+                    logPath = $"./{workdir}/LOGS";
+                    if(int.TryParse(Configuration.GetItemValueByName("LOGS_TTY_NUMBER"), out int tty))
                     {
-                        try
-                        {
-                            Logger.Log(Logger.LogLevel.INFO, $"Log directory '{logsPath}' missing. Creating it");
-                            Directory.CreateDirectory($"{logsPath}");
-                            Logger.Log(Logger.LogLevel.SUCCESS, $"Created log directory in '{logsPath}'");
-                        }
-                        catch (Exception directoryException)
-                        {
-                            Logger.Log(Logger.LogLevel.ERROR, $"Failed to create log directory '{logsPath}'.\nReason:\n{directoryException.Message}" +
-                                "\nSwitching 'LOGS_ENABLE_FS_WRITER' to 'false'");
-                            Configuration.SwitchLogType(false);
-                        }
+                        Logger.ttyNum = tty;
+                        Configuration.Log = Logger.FSLog;
+                    }
+                }
+                else throw new Exception("This OS is unsupported for now. Sorry :)");
+
+                if (!new DirectoryInfo(logPath).Exists)
+                {
+                    try
+                    {
+                        Directory.CreateDirectory(logPath);
+                    }
+                    catch (Exception directoryException)
+                    {
+                        throw new Exception($"Failed to create log directory '{logPath}'.\nReason:\n{directoryException.Message}");
                     }
                 }
             }
-            LogPath = $"{logsPath}latest.log";
-            return true;
         }
     }
 }

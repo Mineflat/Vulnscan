@@ -5,7 +5,8 @@
 
         public static List<ConfigurationItem>? Preset = new List<ConfigurationItem>();
         public delegate void CreateLog(Logger.LogLevel level, string message);
-        public static CreateLog Log { get; set; } = Logger.Log;
+        public static CreateLog? Log { get; set; } = null;
+
         public static List<string> ConfuseReplyPresets = new List<string>()
         {
             "Я не совсем понял о чем ты говоришь", "Я тебя не понимаю",
@@ -14,21 +15,7 @@
             "Между человеком и ботом слишком большая разница. Используй команды если хочешь чтобы я тебя понял", "А можно командой?",
             "Формат команд мне нравится больше. Давай на \"командном\" языке", "И все же, командами мне нравится больше. Я их хотя бы понимаю..."
         };
-        public static void ConfigureLog()
-        {
-            string? LogFS_Preset = GetItemValueByName("LOGS_ENABLE_FS_WRITER");
-            if (LogFS_Preset != null)
-            {
-                if (LogFS_Preset.ToLower().Contains("true"))
-                {
-                    Log = Logger.FSLog;
-                }
-                else
-                {
-                    Log = Logger.Log;
-                }
-            }
-        }
+       
         public static List<ConfigurationItem>? TryRead(string? path)
         {
             if (File.Exists(path))
@@ -59,33 +46,31 @@
                     else
                     {
                         if (paramParts[0].Trim()[0] == '#') continue; // пропускаем комментарии, остальное парсим по возможности
-                        Configuration.Log.Invoke(Logger.LogLevel.ERROR, $"Config: Bad string \'{pureConfigItem}\'. Expected usage is \'PARAMETER=VALUE\'");
+                        Configuration.Log?.Invoke(Logger.LogLevel.ERROR, $"Config: Bad string \'{pureConfigItem}\'. Expected usage is \'PARAMETER=VALUE\'");
                     }
                 }
                 if (configurationItems.Count > 0) return configurationItems;
             }
             return null;
         }
-        public static void SwitchLogType(bool enableFS)
-        {
-            // ToDo: предусмотреть вариант с изменением конфига (внутри приложения) и проверку, существует ли файл на самом деле
-            if (Preset == null) throw new Exception("CRITICAL ERROR: Invalid confuguration file which can't be parsed. Replace it and try to launch again");
-            int replaceIndex = Preset.FindIndex(x => x.Name?.ToLower() == "logs_enable_fs_writer");
-            if (replaceIndex == -1)
-                throw new Exception("CRITICAL ERROR: Parameter 'LOGS_ENABLE_FS_WRITER' in confuguration file is invalid, missing or can't be parsed. Replace it and restart");
-            if (enableFS)
-            {
-                Log = Logger.FSLog;
-                Preset[replaceIndex].Content = "true";
-                Logger.Log(Logger.LogLevel.SUCCESS, $"Log type set to FS logs ({Preset[replaceIndex].Name} => 'true'). Path: '{Storage.LogPath}'");
-            }
-            else
-            {
-                Log = Logger.Log;
-                Preset[replaceIndex].Content = "false";
-                Logger.Log(Logger.LogLevel.SUCCESS, $"Log type set to stdIO - terminal plain text used ({Preset[replaceIndex].Name} => 'false')");
-            }
-        }
+        //public static void SwitchLogType(bool enableFS)
+        //{
+        //    if (Preset == null) throw new Exception("CRITICAL ERROR: Invalid confuguration file which can't be parsed. Replace it and try to launch again");
+        //    int replaceIndex = Preset.FindIndex(x => x.Name?.ToLower() == "logs_enable_fs_writer");
+        //    if (replaceIndex == -1)
+        //        throw new Exception("CRITICAL ERROR: Parameter 'LOGS_ENABLE_FS_WRITER' in confuguration file is invalid, missing or can't be parsed. Replace it and restart");
+        //    if (enableFS)
+        //    {
+        //        Log = Logger.FSLog;
+        //        Preset[replaceIndex].Content = "true";
+        //        Log?.Invoke(Logger.LogLevel.SUCCESS, $"Log type set to FS logs ({Preset[replaceIndex].Name} => 'true'). Path: '{Storage.LogPath}'");
+        //    }
+        //    else
+        //    {
+        //        Preset[replaceIndex].Content = "false";
+        //        Logger.Log(Logger.LogLevel.SUCCESS, $"Log type set to stdIO - terminal plain text used ({Preset[replaceIndex].Name} => 'false')");
+        //    }
+        //}
         public static string? GetItemValueByName(string configItemName)
         {
             if (string.IsNullOrEmpty(configItemName)) return null;
