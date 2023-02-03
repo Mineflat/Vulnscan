@@ -10,25 +10,6 @@ namespace AutoscanBot
         {
             string? workdir = Configuration.GetItemValueByName("WORKING_DIRECTORY");
             if (!Directory.Exists(workdir)) throw new Exception("Configuration error: param 'WORKING_DIRECTORY' is missing or directory missing");
-            /*
-              public static void ConfigureLog()
-        {
-            string? LogFS_Preset = GetItemValueByName("LOGS_ENABLE_FS_WRITER");
-            if (LogFS_Preset != null)
-            {
-                if (LogFS_Preset.ToLower().Contains("true"))
-                {
-                    Log = Logger.FSLog;
-                }
-            }
-            if (int.TryParse(GetItemValueByName("LOGS_ENABLE_FS_WRITER"), out int tty))
-            {
-                Logger.ttyNum = tty;
-                Log = Logger.LogTTY;
-            }
-        }
-             */
-
             bool logFSEnabled = Configuration.GetItemValueByName("LOGS_ENABLE_FS_WRITER")?.Trim().ToLower() == "true";
             if (logFSEnabled)
             {
@@ -43,17 +24,25 @@ namespace AutoscanBot
                     logPath = $"{workdir}/LOGS";
                     if(int.TryParse(Configuration.GetItemValueByName("LOGS_TTY_NUMBER"), out int tty))
                     {
-                        Logger.ttyNum = tty;
-                        Configuration.Log = Logger.FSLog;
+                        if(tty > 0 && tty < 13)
+                        {
+                            Logger.ttyNum = tty;
+                            Configuration.Log = Logger.FSLog;
+                        }
+                        else
+                        {
+                            Console.WriteLine($"[{DateTime.Now}][ERROR]: Can't configure log. Reason: tty must be in range [1;12]. Current: {tty}");
+                        }
                     }
                 }
                 else throw new Exception("This OS is unsupported for now. Sorry :)");
-
+                // Проверяем наличие директории и создаем в ней лог
                 if (!new DirectoryInfo(logPath).Exists)
                 {
                     try
                     {
                         Directory.CreateDirectory(logPath);
+                        Configuration.Log?.Invoke(Logger.LogLevel.INFO, "Log successfilly set");
                     }
                     catch (Exception directoryException)
                     {
