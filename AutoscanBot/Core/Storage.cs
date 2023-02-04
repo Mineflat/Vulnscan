@@ -1,4 +1,4 @@
-﻿namespace AutoscanBot
+﻿namespace AutoscanBot.Core
 {
     internal class Storage
     {
@@ -19,9 +19,9 @@
                 if (OperatingSystem.IsLinux())
                 {
                     logPath = $"{workdir}/LOGS/";
-                    if(byte.TryParse(Configuration.GetItemValueByName("LOGS_TTY_NUMBER"), out byte tty))
+                    if (byte.TryParse(Configuration.GetItemValueByName("LOGS_TTY_NUMBER"), out byte tty))
                     {
-                        if(tty > 0 && tty < 13)
+                        if (tty > 0 && tty < 13)
                         {
                             Logger.ttyNum = tty;
                         }

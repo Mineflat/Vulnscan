@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Diagnostics;
 
-namespace AutoscanBot
+namespace AutoscanBot.Core
 {
     internal class Logger
     {

@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Telegram.BotAPI.AvailableMethods.FormattingOptions;
 
-namespace AutoscanBot.Telegramm
+namespace AutoscanBot.Core
 {
     internal class Command
     {
@@ -14,7 +14,7 @@ namespace AutoscanBot.Telegramm
 
         public bool EnableTerminalUsing = false;
         public bool EnableBotUsing = false;
-        public dynamic TelegrammParseMode = ParseMode.MarkdownV2; // Это плохой код, не надо так делать. Я же - скоро исправлю
+        //        public dynamic TelegrammParseMode = ParseMode.MarkdownV2; // Это плохой код, не надо так делать. Я же - скоро исправлю
         public byte Type { get; set; } = 0; // ⚙=0 🤖=1 ⚙🤖=2 
         public short Class { get; set; } = 0; // TERMINAL = 0, BOT = 1, COMMON = 2
 
@@ -47,7 +47,7 @@ namespace AutoscanBot.Telegramm
         private static CommandExecutionResult ShowConfig()
         {
             string returnMessage = string.Empty;
-            if(Configuration.Preset != null)
+            if (Configuration.Preset != null)
             {
                 foreach (var item in Configuration.Preset)
                 {

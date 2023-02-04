@@ -1,4 +1,4 @@
-﻿namespace AutoscanBot
+﻿namespace AutoscanBot.Core
 {
     internal class Configuration
     {
@@ -12,7 +12,7 @@
             "Между человеком и ботом слишком большая разница. Используй команды если хочешь чтобы я тебя понял", "А можно командой?",
             "Формат команд мне нравится больше. Давай на \"командном\" языке", "И все же, командами мне нравится больше. Я их хотя бы понимаю..."
         };
-       
+
         public static List<ConfigurationItem>? TryRead(string? path)
         {
             if (File.Exists(path))
@@ -39,7 +39,7 @@
 
                         ConfigurationItem item = new ConfigurationItem(paramParts[0].Trim(replaceChars).ToLower(), paramParts[1].Trim(replaceChars));
                         configurationItems.Add(item);
-                        }
+                    }
                     else
                     {
                         if (paramParts[0].Trim()[0] == '#') continue; // пропускаем комментарии, остальное парсим по возможности

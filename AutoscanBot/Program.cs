@@ -1,4 +1,6 @@
-﻿namespace AutoscanBot
+﻿using AutoscanBot.Core;
+
+namespace AutoscanBot
 {
     internal class Program
     {
@@ -39,7 +41,7 @@
             // Старт бота
             Telegramm.Bot.Start();
             // Старт шелла
-
+            Shell.Shell.Start();
             Console.ReadLine();
         }
     }

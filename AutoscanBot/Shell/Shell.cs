@@ -1,4 +1,5 @@
-﻿using System;
+﻿using AutoscanBot.Core;
+using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Linq;
@@ -15,13 +16,14 @@ namespace AutoscanBot.Shell
         {
             if (Configuration.GetItemValueByName("ENABLE_SHELL_START") == "true")
             {
+                Logger.Log(Logger.LogLevel.INFO, "Starting shell session");
                 return RunShell();
             }
+            Logger.Log(Logger.LogLevel.INFO, "Shell off due the config valie");
             return false;
         }
         private static bool RunShell()
         {
-            Logger.Log(Logger.LogLevel.INFO, "Starting shell session");
             ShellThread = new Thread(x =>
             {
                 StartReceiving();
@@ -46,9 +48,31 @@ namespace AutoscanBot.Shell
                 command = command.Trim();
                 if (command?.Length > 0)
                 {
-
+                    Console.WriteLine(ProcessMessage(command));
                 }
             }
+        }
+        private static string? ProcessMessage(string message)
+        {
+            foreach (Command command in Command.AvailibleCommands)
+            {
+                if (command.InvokeName.ToLower() == message)
+                {
+                    if (command.LinkedTo != null)
+                    {
+                        CommandExecutionResult result = command.LinkedTo.Invoke();
+                        if (result != null && result.Success)
+                        {
+                            return result.Message;
+                        }
+                    }
+                    else
+                    {
+                        return "Эта команда, конечно, существует, но мой создатель пока ее не реализовал. Пните этого человека чтобы получить больше информаци";
+                    }
+                }
+            }
+            return string.Empty;
         }
     }
 }

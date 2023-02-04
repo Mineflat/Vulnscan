@@ -1,4 +1,5 @@
-﻿using Telegram.BotAPI;
+﻿using AutoscanBot.Core;
+using Telegram.BotAPI;
 using Telegram.BotAPI.AvailableMethods;
 using Telegram.BotAPI.GettingUpdates;
 
