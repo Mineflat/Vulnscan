@@ -125,12 +125,12 @@
     <value>Bad usage! To start system use: ./vulnscan &lt;CONFIG PATH&gt;</value>
     <comment>Determines normal usage</comment>
   </data>
-  <data name="redirectLogs" xml:space="preserve">
-    <value />
-  </data>
   <data name="RequiredVariables" xml:space="preserve">
     <value>WORKING_DIRECTORY</value>
     <comment>Determines required variables list</comment>
+  </data>
+  <data name="SHELL_Prompt" xml:space="preserve">
+    <value>$ </value>
   </data>
   <data name="UncorrectBotName" xml:space="preserve">
     <value>Variable 'BOT_INIT_NAME' isn't set. Telegramm connection closed</value>

@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace AutoscanBot.Telegramm
 {
-    internal class CommandExecutionResult
+    class CommandExecutionResult
     {
         public bool Success { get; set; }
         public string? Message { get; set; }

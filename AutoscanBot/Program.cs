@@ -36,7 +36,10 @@
             if (!CheckArgs(args)) return;
             Storage.ConfigureLog();
             Logger.Log(Logger.LogLevel.INFO, $"{new string('=', 10)} SYSTEM STARTED AT {DateTime.Now} {new string('=', 10)}");
+            // Старт бота
             Telegramm.Bot.Start();
+            // Старт шелла
+
             Console.ReadLine();
         }
     }

@@ -12,9 +12,13 @@ namespace AutoscanBot.Telegramm
         public static void Start()
         {
             if (Setup(Configuration.GetItemValueByName("bot_token")))
+            {
                 Logger.Log(Logger.LogLevel.SUCCESS, "Setup is OK, bot started successfully");
+            }
             else
+            {
                 Logger.Log(Logger.LogLevel.ERROR, Properties.Resources.BadOrMissingTelegrammBotToken);
+            }
         }
         private static bool Setup(string? token)
         {

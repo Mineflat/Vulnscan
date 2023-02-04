@@ -50,28 +50,12 @@
             }
             return null;
         }
-        //public static void SwitchLogType(bool enableFS)
-        //{
-        //    if (Preset == null) throw new Exception("CRITICAL ERROR: Invalid confuguration file which can't be parsed. Replace it and try to launch again");
-        //    int replaceIndex = Preset.FindIndex(x => x.Name?.ToLower() == "logs_enable_fs_writer");
-        //    if (replaceIndex == -1)
-        //        throw new Exception("CRITICAL ERROR: Parameter 'LOGS_ENABLE_FS_WRITER' in confuguration file is invalid, missing or can't be parsed. Replace it and restart");
-        //    if (enableFS)
-        //    {
-        //        Log = Logger.FSLog;
-        //        Preset[replaceIndex].Content = "true";
-        //        Log?.Invoke(Logger.LogLevel.SUCCESS, $"Log type set to FS logs ({Preset[replaceIndex].Name} => 'true'). Path: '{Storage.LogPath}'");
-        //    }
-        //    else
-        //    {
-        //        Preset[replaceIndex].Content = "false";
-        //        Logger.Log(Logger.LogLevel.SUCCESS, $"Log type set to stdIO - terminal plain text used ({Preset[replaceIndex].Name} => 'false')");
-        //    }
-        //}
         public static string? GetItemValueByName(string configItemName)
         {
             if (string.IsNullOrEmpty(configItemName)) return null;
             string? result = Preset?.Where(i => i.Name?.ToLower() == configItemName.ToLower()).FirstOrDefault()?.Content?.Trim('\0', ' ');
+            result = result?.Trim();
+            if (result?.Length == 0) return null;
             return result;
         }
     }
