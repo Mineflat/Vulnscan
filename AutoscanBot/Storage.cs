@@ -1,7 +1,4 @@
-﻿using System.IO.Pipes;
-using System.Runtime.InteropServices;
-
-namespace AutoscanBot
+﻿namespace AutoscanBot
 {
     internal class Storage
     {
@@ -16,18 +13,17 @@ namespace AutoscanBot
                 string logPath = string.Empty;
                 if (OperatingSystem.IsWindows())
                 {
-                    logPath = $"{workdir}\\LOGS";
+                    logPath = $"{workdir}\\LOGS\\";
                 }
                 else
                 if (OperatingSystem.IsLinux())
                 {
-                    logPath = $"{workdir}/LOGS";
-                    if(int.TryParse(Configuration.GetItemValueByName("LOGS_TTY_NUMBER"), out int tty))
+                    logPath = $"{workdir}/LOGS/";
+                    if(byte.TryParse(Configuration.GetItemValueByName("LOGS_TTY_NUMBER"), out byte tty))
                     {
                         if(tty > 0 && tty < 13)
                         {
                             Logger.ttyNum = tty;
-                            Configuration.Log = Logger.FSLog;
                         }
                         else
                         {
@@ -36,13 +32,14 @@ namespace AutoscanBot
                     }
                 }
                 else throw new Exception("This OS is unsupported for now. Sorry :)");
+                LogPath = logPath;
                 // Проверяем наличие директории и создаем в ней лог
                 if (!new DirectoryInfo(logPath).Exists)
                 {
                     try
                     {
                         Directory.CreateDirectory(logPath);
-                        Configuration.Log?.Invoke(Logger.LogLevel.INFO, "Log successfilly set");
+                        Logger.Log(Logger.LogLevel.INFO, "Log successfilly set");
                     }
                     catch (Exception directoryException)
                     {

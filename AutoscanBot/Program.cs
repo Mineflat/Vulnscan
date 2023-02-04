@@ -11,17 +11,17 @@
         {
             if (args.Length != 1)
             {
-                Configuration.Log?.Invoke(Logger.LogLevel.CRITICAL, Properties.Resources.BadUsageMessage);
+                Logger.Log(Logger.LogLevel.CRITICAL, Properties.Resources.BadUsageMessage);
                 return false;
             }
             Configuration.Preset = Configuration.TryRead(args[0]);
             if (Configuration.Preset == null)
             {
-                Configuration.Log?.Invoke(Logger.LogLevel.CRITICAL, $"File '{args[0]}' doesn't exist or invalid. Create and fill it with required variables before starting\n" +
+                Logger.Log(Logger.LogLevel.CRITICAL, $"File '{args[0]}' doesn't exist or invalid. Create and fill it with required variables before starting\n" +
                     $"Config missing this things:\n{Properties.Resources.RequiredVariables}");
                 return false;
             }
-            Configuration.Log?.Invoke(Logger.LogLevel.SUCCESS, "Configuration done, starting system");
+            Logger.Log(Logger.LogLevel.SUCCESS, "Configuration done, starting system");
             return true;
         }
         //private static bool InstallWorkingDirectory()
@@ -35,7 +35,7 @@
         {
             if (!CheckArgs(args)) return;
             Storage.ConfigureLog();
-            Configuration.Log?.Invoke(Logger.LogLevel.INFO, $"{new string('=', 10)} SYSTEM STARTED AT {DateTime.Now} {new string('=', 10)}");
+            Logger.Log(Logger.LogLevel.INFO, $"{new string('=', 10)} SYSTEM STARTED AT {DateTime.Now} {new string('=', 10)}");
             Telegramm.Bot.Start();
             Console.ReadLine();
         }

@@ -4,9 +4,6 @@
     {
 
         public static List<ConfigurationItem>? Preset = new List<ConfigurationItem>();
-        public delegate void CreateLog(Logger.LogLevel level, string message);
-        public static CreateLog? Log { get; set; } = null;
-
         public static List<string> ConfuseReplyPresets = new List<string>()
         {
             "Я не совсем понял о чем ты говоришь", "Я тебя не понимаю",
@@ -46,7 +43,7 @@
                     else
                     {
                         if (paramParts[0].Trim()[0] == '#') continue; // пропускаем комментарии, остальное парсим по возможности
-                        Configuration.Log?.Invoke(Logger.LogLevel.ERROR, $"Config: Bad string \'{pureConfigItem}\'. Expected usage is \'PARAMETER=VALUE\'");
+                        Logger.Log(Logger.LogLevel.ERROR, $"Config: Bad string \'{pureConfigItem}\'. Expected usage is \'PARAMETER=VALUE\'");
                     }
                 }
                 if (configurationItems.Count > 0) return configurationItems;

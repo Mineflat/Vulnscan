@@ -20,7 +20,7 @@ namespace AutoscanBot.Telegramm
                 {
                     Directory.CreateDirectory($"{rootPath}/CORE/Scripts/");
                 }
-                Configuration.Log?.Invoke(Logger.LogLevel.INFO, "Cleaning modules...");
+                Logger.Log(Logger.LogLevel.INFO, "Cleaning modules...");
                 foreach (var item in directoryInfo.EnumerateFiles())
                 {
                     item.Delete();
@@ -35,7 +35,7 @@ namespace AutoscanBot.Telegramm
                 {
                     Directory.CreateDirectory($"{rootPath}\\CORE\\Scripts\\");
                 }
-                Configuration.Log?.Invoke(Logger.LogLevel.INFO, "Cleaning modules...");
+                Logger.Log(Logger.LogLevel.INFO, "Cleaning modules...");
                 foreach (var item in directoryInfo.EnumerateFiles())
                 {
                     item.Delete();
